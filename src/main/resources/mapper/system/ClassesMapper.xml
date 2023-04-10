@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lvpao.qingxing.mapper.ClassesMapper">
+    
+    <resultMap type="Classes" id="ClassesResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectClassesVo">
+        select id, name from classes
+    </sql>
+
+    <select id="selectClassesList" parameterType="com.lvpao.qingxing.domain.Classes" resultMap="ClassesResult">
+        <include refid="selectClassesVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectClassesById" parameterType="Long" resultMap="ClassesResult">
+        <include refid="selectClassesVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertClasses" parameterType="com.lvpao.qingxing.domain.Classes" useGeneratedKeys="true" keyProperty="id">
+        insert into classes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClasses" parameterType="com.lvpao.qingxing.domain.Classes">
+        update classes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassesById" parameterType="Long">
+        delete from classes where id = #{id}
+    </delete>
+
+    <delete id="deleteClassesByIds" parameterType="String">
+        delete from classes where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
